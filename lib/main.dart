@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hello_flutter/empty_widget.dart';
 import 'package:hello_flutter/todo.dart';
 
 void main() {
@@ -95,12 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    var emptyWidgetVisible = _todos.isEmpty && !_textFieldVisible;
     return Scaffold(
       appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
@@ -128,19 +124,21 @@ class _MyHomePageState extends State<MyHomePage> {
                     )
                   : null,
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: _todos.length,
-              itemBuilder: (context, index) {
-                final todo = _todos[index];
-                return ListTile(
-                  key: ValueKey(todo.id),
-                  title: Text(todo.title),
-                  textColor: todo.done ? Colors.grey : Colors.black,
-                  onTap: () => _toggleDone(todo.id),
-                );
-              },
-            ),
+            (emptyWidgetVisible)
+                ? EmptyWidget(onAddClick: _handleAddClick)
+                : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _todos.length,
+                    itemBuilder: (context, index) {
+                      final todo = _todos[index];
+                      return ListTile(
+                        key: ValueKey(todo.id),
+                        title: Text(todo.title),
+                        textColor: todo.done ? Colors.grey : Colors.black,
+                        onTap: () => _toggleDone(todo.id),
+                      );
+                    },
+                  ),
           ],
         ),
       ),
