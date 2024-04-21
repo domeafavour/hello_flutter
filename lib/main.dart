@@ -61,9 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _textFieldVisible = false;
 
   // Define an todo object list
-  final List<Todo> _todos = [
-    createNewTodo('Get up'),
-  ];
+  final List<Todo> _todos = [];
 
   void _handleAddClick() {
     setState(() {
@@ -139,27 +137,35 @@ class _MyHomePageState extends State<MyHomePage> {
                     itemCount: _todos.length,
                     itemBuilder: (context, index) {
                       final todo = _todos[index];
-                      return ListBody(key: ValueKey(todo.id), children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Checkbox(
-                                  value: todo.done,
-                                  onChanged: (value) => _toggleDone(todo.id),
-                                ),
-                                Text(todo.title),
-                              ],
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () => _removeTodo(todo.id),
-                            ),
-                          ],
+                      final controller =
+                          TextEditingController(text: todo.title);
+                      final focusNode = FocusNode();
+                      return ListTile(
+                        key: ValueKey(todo.id),
+                        title: TextField(
+                            controller: controller,
+                            focusNode: focusNode,
+                            onEditingComplete: () {
+                              setState(() {
+                                todo.title = controller.text;
+                              });
+                              focusNode.unfocus();
+                              controller.clear();
+                            },
+                            style: TextStyle(
+                              color: todo.done ? Colors.grey : null,
+                              decoration:
+                                  todo.done ? TextDecoration.lineThrough : null,
+                            )),
+                        leading: Checkbox(
+                          value: todo.done,
+                          onChanged: (value) => _toggleDone(todo.id),
                         ),
-                        const Divider(),
-                      ]);
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => _removeTodo(todo.id),
+                        ),
+                      );
                     },
                   ),
           ],
