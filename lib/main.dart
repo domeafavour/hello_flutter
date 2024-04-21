@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hello_flutter/todo.dart';
 
 void main() {
   runApp(const MyApp());
@@ -57,7 +58,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final textEditingController = TextEditingController();
   bool _textFieldVisible = false;
-  final List<String> _todos = [];
+
+  // Define an todo object list
+  final List<Todo> _todos = [];
 
   void _handleAddClick() {
     setState(() {
@@ -72,9 +75,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _handleEditingComplete() {
-    _todos.add(textEditingController.text);
+    _todos.add(createNewTodo(textEditingController.text));
     textEditingController.clear();
     _hideTextField();
+  }
+
+  void _toggleDone(int id) {
+    final todo = _todos.firstWhere((element) => element.id == id);
+    setState(() {
+      todo.done = !todo.done;
+    });
   }
 
   @override
@@ -122,8 +132,12 @@ class _MyHomePageState extends State<MyHomePage> {
               shrinkWrap: true,
               itemCount: _todos.length,
               itemBuilder: (context, index) {
+                final todo = _todos[index];
                 return ListTile(
-                  title: Text(_todos[index]),
+                  key: ValueKey(todo.id),
+                  title: Text(todo.title),
+                  textColor: todo.done ? Colors.grey : Colors.black,
+                  onTap: () => _toggleDone(todo.id),
                 );
               },
             ),
