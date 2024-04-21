@@ -57,6 +57,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final textEditingController = TextEditingController();
   bool _textFieldVisible = false;
+  final List<String> _todos = [];
 
   void _handleAddClick() {
     setState(() {
@@ -71,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _handleEditingComplete() {
-    print(textEditingController.text);
+    _todos.add(textEditingController.text);
     textEditingController.clear();
     _hideTextField();
   }
@@ -112,17 +113,25 @@ class _MyHomePageState extends State<MyHomePage> {
                       onEditingComplete: _handleEditingComplete,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Enter your username',
+                        labelText: 'Enter your todo',
                       ),
                     )
                   : null,
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: _todos.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(_todos[index]),
+                );
+              },
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _handleAddClick,
-        tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
