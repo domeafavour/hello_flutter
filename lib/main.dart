@@ -61,7 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _textFieldVisible = false;
 
   // Define an todo object list
-  final List<Todo> _todos = [];
+  final List<Todo> _todos = [
+    createNewTodo('Get up'),
+  ];
 
   void _handleAddClick() {
     setState(() {
@@ -85,6 +87,12 @@ class _MyHomePageState extends State<MyHomePage> {
     final todo = _todos.firstWhere((element) => element.id == id);
     setState(() {
       todo.done = !todo.done;
+    });
+  }
+
+  void _removeTodo(int id) {
+    setState(() {
+      _todos.removeWhere((element) => element.id == id);
     });
   }
 
@@ -131,12 +139,27 @@ class _MyHomePageState extends State<MyHomePage> {
                     itemCount: _todos.length,
                     itemBuilder: (context, index) {
                       final todo = _todos[index];
-                      return ListTile(
-                        key: ValueKey(todo.id),
-                        title: Text(todo.title),
-                        textColor: todo.done ? Colors.grey : Colors.black,
-                        onTap: () => _toggleDone(todo.id),
-                      );
+                      return ListBody(key: ValueKey(todo.id), children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: todo.done,
+                                  onChanged: (value) => _toggleDone(todo.id),
+                                ),
+                                Text(todo.title),
+                              ],
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () => _removeTodo(todo.id),
+                            ),
+                          ],
+                        ),
+                        const Divider(),
+                      ]);
                     },
                   ),
           ],
